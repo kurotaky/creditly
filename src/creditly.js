@@ -51,6 +51,20 @@ var Creditly = (function() {
     return number.match("^(34|37)");
   };
 
+  var isDinersClub = function(number) {
+    return number.match("^(30[0-5]|3095|36|38|39)");
+  };
+
+  var cardBrand = function(number) {
+    if (isAmericanExpress(number)) {
+      return "americanExpress";
+    } else if (isDinersClub(number)) {
+      return "dinersClub";
+    } else {
+      return "";
+    }
+  };
+
   var shouldProcessInput = function(e, maximumLength, selector) {
     var target = e.currentTarget;
     if (reachedMaximumLength(e, maximumLength, selector)) {
@@ -94,11 +108,14 @@ var Creditly = (function() {
 
   var NumberInput = (function() {
     var americanExpressSpaces = [4, 10, 15];
+    var dinersClubSpaces = [4, 10, 14];
     var defaultSpaces = [4, 8, 12, 16];
 
-    var getMaximumLength = function(isAmericanExpressCard) {
-      if (isAmericanExpressCard) {
+    var getMaximumLength = function(cardBrandName) {
+      if (cardBrandName == "americanExpress") {
         return 15;
+      } else if (cardBrandName == "dinersClub") {
+        return 14;
       } else {
         return 16;
       }
@@ -110,11 +127,15 @@ var Creditly = (function() {
         removeErrors(element);
         var number = getInputValue(e, selector);
         var isAmericanExpressCard = isAmericanExpress(number);
-        var maximumLength = getMaximumLength(isAmericanExpressCard);
+        var isDinersClubCard = isDinersClub(number);
+        var cardBrandName = cardBrand(number);
+        var maximumLength = getMaximumLength(cardBrandName);
         if (shouldProcessInput(e, maximumLength, selector)) {
           var newInput;
           if (isAmericanExpressCard) {
             newInput = addSpaces(number, americanExpressSpaces);
+          } else if (isDinersClubCard) {
+            newInput = addSpaces(number, dinersClubSpaces);
           } else {
             newInput = addSpaces(number, defaultSpaces);
           }
@@ -400,6 +421,8 @@ var Creditly = (function() {
         return "MasterCard";
       } else if (/^(6011|622|64[4-9]|65)/.test(value)) {
         return "Discover";
+      } else if (/^(30[0-5]|3095|36|38|39)/.test(value)) {
+        return "DinersClub";
       } else {
         return "";
       }
