@@ -126,15 +126,13 @@ var Creditly = (function() {
         var element = document.querySelector(selector);
         removeErrors(element);
         var number = getInputValue(e, selector);
-        var isAmericanExpressCard = isAmericanExpress(number);
-        var isDinersClubCard = isDinersClub(number);
         var cardBrandName = cardBrand(number);
         var maximumLength = getMaximumLength(cardBrandName);
         if (shouldProcessInput(e, maximumLength, selector)) {
           var newInput;
-          if (isAmericanExpressCard) {
+          if (cardBrandName == "americanExpress") {
             newInput = addSpaces(number, americanExpressSpaces);
-          } else if (isDinersClubCard) {
+          } else if (cardBrandName == "dinersClub") {
             newInput = addSpaces(number, dinersClubSpaces);
           } else {
             newInput = addSpaces(number, defaultSpaces);
